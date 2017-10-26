@@ -9,6 +9,7 @@ class Note extends Component {
     super(props);
     this.state = {
       inputValue: '',
+      deleted: false,
     };
   }
 
@@ -25,25 +26,24 @@ class Note extends Component {
         <span style={{ fontSize: '20px', marginRight: '5px' }}>{this.props.number} </span>
         <FormControl
           value={this.state.inputValue}
-          disabled={this.props.deleted}
-          type="text"
+          disabled={this.state.deleted}
           onChange={event => this.setState({ inputValue: event.target.value })}
         />
-        {this.props.deleted ? null : (
+        {this.state.deleted ? null : (
           <Button
             bsStyle="danger"
             onClick={() => {
-              this.props.deleteNote(this.props.id);
+              this.setState({ deleted: !this.state.deleted });
             }}
           >
             Delete Note
           </Button>
         )}
-        {!this.props.deleted ? null : (
+        {!this.state.deleted ? null : (
           <Button
             bsStyle="success"
             onClick={() => {
-              this.props.deleteNote(this.props.id);
+              this.setState({ deleted: !this.state.deleted });
             }}
           >
             Show Note
@@ -57,17 +57,11 @@ class Note extends Component {
 Note.propTypes = {
   number: PropTypes.number,
   text: PropTypes.string,
-  deleted: PropTypes.bool,
-  id: PropTypes.number,
-  deleteNote: PropTypes.func,
 };
 
 Note.defaultProps = {
   number: 0,
   text: '',
-  deleted: false,
-  id: -1,
-  deleteNote: id => ({ type: 'DELETE_NOTE', id }),
 };
 
 const mapStateToProps = state => state;
