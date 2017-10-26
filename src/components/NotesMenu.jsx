@@ -10,15 +10,32 @@ class NotesMenu extends Component {
     super(props);
     this.state = {
       notes: [],
+      number: 1,
     };
   }
 
   render() {
+    const { notes } = this.state;
     if (this.props.showPanel) {
       return (
         <div>
           <ButtonGroup style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-            <Button bsStyle="success" onClick={() => this.props.addNote()}>
+            <Button
+              bsStyle="success"
+              onClick={() =>
+                this.setState({
+                  notes: [
+                    ...this.state.notes,
+                    {
+                      deleted: false,
+                      number: this.state.number,
+                      id: Math.random(),
+                      text: '',
+                    },
+                  ],
+                  number: this.state.number + 1,
+                })}
+            >
               Add Note
             </Button>
             <Button bsStyle="warning" onClick={() => this.props.toggleMenu()}>
@@ -27,13 +44,8 @@ class NotesMenu extends Component {
           </ButtonGroup>
 
           <ListGroup>
-            {this.props.notes.map(note => (
-              <Note
-                deleted={note.deleted}
-                number={this.props.notes.indexOf(note) + 1}
-                key={Math.random()}
-                id={note.id}
-              />
+            {notes.map(note => (
+              <Note deleted={note.deleted} number={note.number} key={Math.random()} id={note.id} />
             ))}
           </ListGroup>
         </div>
@@ -46,15 +58,11 @@ class NotesMenu extends Component {
 NotesMenu.propTypes = {
   toggleMenu: PropTypes.func,
   showPanel: PropTypes.bool,
-  addNote: PropTypes.func,
-  notes: PropTypes.arrayOf(PropTypes.object),
 };
 
 NotesMenu.defaultProps = {
   toggleMenu: () => ({ type: 'TOGGLE_MENU' }),
-  addNote: note => ({ type: 'ADD_NOTE', note }),
   showPanel: false,
-  notes: [],
 };
 
 const mapStateToProps = state => state;
